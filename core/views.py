@@ -5,6 +5,9 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .serializers import PostSerializer
+from .models import Post
+
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
@@ -14,10 +17,8 @@ class TestView(APIView):
         }
         return Response(data)
 
-
-""" def test_view(request):
-    data = {
-        'name': 'Eduardo',
-        'age': 44
-    }
-    return JsonResponse(data) """
+    def post(self, request, *args, **kwargs):
+        serializer = PostSerializer(data=request.data)
+        serializer.is_valid()
+        serializer.save()
+        return Response(serializer.data)
