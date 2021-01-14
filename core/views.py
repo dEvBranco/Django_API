@@ -11,14 +11,15 @@ from .models import Post
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
-        data = {
-            'name': 'Eduardo',
-            'age': 44
-        }
-        return Response(data)
+        qs = Post.objects.all()
+        post = qs.first()
+        #serializer = PostSerializer(qs, many=True)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         serializer = PostSerializer(data=request.data)
-        serializer.is_valid()
-        serializer.save()
-        return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
